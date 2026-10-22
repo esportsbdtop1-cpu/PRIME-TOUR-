@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>PRIME TOUR</title>
+<style>
+:root{--green:#16a34a;--yellow:#facc15;--ink:#111827;--line:#e5e7eb;--muted:#64748b;--white:#fff;--soft:#f8fafc}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#fff;color:var(--ink)}
+header{background:#fff;padding:24px 15px;text-align:center;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+header h1{margin:0;color:#111827;font-size:30px;letter-spacing:1px}header h1 span{color:var(--green)}header p{margin:7px 0 0;color:var(--muted)}
+.container{max-width:780px;margin:auto;padding:15px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:15px;box-shadow:0 8px 24px #0f172a0b}
+h2,h3{margin-top:0}h2{font-size:21px}input,select,textarea{width:100%;padding:14px;margin:7px 0;border-radius:12px;border:1px solid #d1d5db;background:#fff;color:#111827;outline:none;font-size:15px}textarea{min-height:90px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #16a34a18}
+button{width:100%;padding:13px 14px;border:1px solid transparent;border-radius:12px;background:#111827;color:#facc15;font-weight:800;margin-top:8px;cursor:pointer;font-size:14px;letter-spacing:.3px;transition:.18s}button:hover{transform:translateY(-1px);filter:brightness(1.04)}button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+button.green{background:#dcfce7;color:#166534;border-color:#86efac}button.red{background:#fee2e2;color:#b91c1c;border-color:#fecaca}button.gray{background:#f1f5f9;color:#334155;border-color:#e2e8f0}button.orange{background:#fef9c3;color:#854d0e;border-color:#fde047}button.google{background:#fff;color:#1f2937;border-color:#d1d5db}button.yellow{background:#facc15;color:#111827}button.blue{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+.hidden{display:none!important}.nav{display:flex;gap:8px;overflow-x:auto;margin-bottom:15px;padding-bottom:5px}.nav button{min-width:115px;width:auto;margin:0;white-space:nowrap;flex:0 0 auto}
+.balance{text-align:center;font-size:32px;color:#15803d;font-weight:900}.badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#fef9c3;color:#854d0e;font-size:12px;font-weight:bold}.small{color:var(--muted);font-size:13px}.success{color:#15803d}.warning{color:#a16207}.danger{color:#b91c1c}hr{border:0;border-top:1px solid var(--line);margin:18px 0}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.tournament h3{color:#15803d;margin-bottom:8px}.empty{text-align:center;color:var(--muted);padding:15px}.loading{text-align:center;color:var(--muted);padding:15px}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111827;color:#facc15;padding:12px 20px;border-radius:12px;display:none;z-index:9999;max-width:90%;text-align:center;box-shadow:0 10px 35px #0002}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.amount{font-size:24px;color:#15803d;font-weight:bold}.notice{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px;color:#166534}.admin-grid{display:grid;grid-template-columns:1fr;gap:0}.file-note{font-size:12px;color:#64748b}.media-preview{max-width:100%;border-radius:12px;margin-top:8px}.hero{background:linear-gradient(135deg,#f0fdf4,#fffbea);border:1px solid #dcfce7;border-radius:18px;padding:20px}.pill{display:inline-block;background:#111827;color:#facc15;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:bold}
+@media(min-width:650px){.admin-grid{grid-template-columns:1fr 1fr;gap:12px}.container{padding:22px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="siteBrandTitle">🏆 PRIME <span>TOUR</span></h1>
+  <p>Free Fire Tournament Platform</p>
+</header>
+
+<div class="container">
+
+<!-- LOGIN -->
+<section id="authPage">
+  <div class="card">
+    <h2>🔐 Login</h2>
+    <input id="loginEmail" type="email" autocomplete="email" placeholder="Email">
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Password">
+    <button id="loginBtn">LOGIN</button>
+    <button class="google" id="googleLoginBtn">🌐 CONTINUE WITH GOOGLE</button>
+    <p class="small" style="text-align:center">Account নেই?</p>
+    <button class="gray" id="showRegisterBtn">CREATE ACCOUNT</button>
+  </div>
+</section>
+
+<!-- REGISTER -->
+<section id="registerPage" class="hidden">
+  <div class="card">
+    <h2>👤 Create Account</h2>
+    <input id="regName" maxlength="40" placeholder="Your Name">
+    <input id="regEmail" type="email" autocomplete="email" placeholder="Email">
+    <input id="regPassword" type="password" autocomplete="new-password" placeholder="Password (minimum 6)">
+    <button id="registerBtn">REGISTER</button>
+    <button class="google" id="googleRegisterBtn">🌐 CONTINUE WITH GOOGLE</button>
+    <button class="gray" id="showLoginBtn">BACK TO LOGIN</button>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="appPage" class="hidden">
+
+  <div class="nav">
+    <button data-section="home">🏠 Home</button>
+    <button data-section="tournaments">🏆 Tournaments</button>
+    <button data-section="wallet">💰 Wallet</button>
+    <button data-section="profile">👤 Profile</button>
+    <button id="adminNavBtn" class="orange hidden" data-section="admin">🛠️ Admin</button>
+  </div>
+
+  <!-- HOME -->
+  <section id="homeSection">
+    <div class="card">
+      <h2>Welcome 👋</h2>
+      <h3 id="welcomeName">Player</h3>
+      <p class="small">Your Balance</p>
+      <div class="balance">৳ <span id="homeBalance">0</span></div>
+    </div>
+    <div class="card hero">
+      <span class="pill">FREE FIRE ESPORTS</span>
+      <h2>🔥 PRIME TOUR</h2>
+      <p>Join tournaments and compete for prizes.</p>
+      <button class="yellow" data-section="tournaments">🎮 JOIN TOURNAMENT</button>
+    </div>
+    <div class="card"><h3>📢 Website Notice</h3><div id="publicSiteNotice" class="notice">Welcome to PRIME TOUR</div></div>
+    <div class="card"><h3>📢 Announcements</h3><div id="publicAnnouncements" class="loading">Loading...</div></div>
+    <div class="card"><h3>🎬 Latest Media</h3><div id="publicMedia" class="loading">Loading...</div></div>
+  </section>
+
+  <!-- TOURNAMENTS -->
+  <section id="tournamentsSection" class="hidden">
+    <div class="card">
+      <h2>🏆 Available Tournaments</h2>
+      <div id="tournamentList" class="loading">Loading...</div>
+    </div>
+  </section>
+
+  <!-- WALLET -->
+  <section id="walletSection" class="hidden">
+    <div class="card">
+      <h2>💰 My Wallet</h2>
+      <div class="balance">৳ <span id="walletBalance">0</span></div>
+      <hr>
+      <h3>📲 Add Money</h3>
+      <div class="notice">
+        bKash Number: <strong id="bkashNumber">01642268349</strong><br><br>
+        প্রথমে এই নম্বরে Send Money করো। তারপর Amount ও Transaction ID দিয়ে Submit করো।
+      </div>
+      <input id="depositAmount" type="number" min="1" step="1" placeholder="Amount">
+      <input id="depositTrx" maxlength="100" placeholder="bKash Transaction ID">
+      <button id="depositBtn">💳 SUBMIT DEPOSIT</button>
+    </div>
+    <div class="card">
+      <h3>📋 My Deposit History</h3>
+      <div id="depositHistory" class="loading">Loading...</div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profileSection" class="hidden">
+    <div class="card">
+      <h2>👤 Profile</h2>
+      <p class="small">Name</p>
+      <strong id="profileName"></strong>
+      <p class="small">Email</p>
+      <strong id="profileEmail"></strong>
+      <hr>
+      <input id="editName" maxlength="40" placeholder="New Name">
+      <button id="saveNameBtn">SAVE NAME</button>
+      <button class="red" id="logoutBtn1">🚪 LOGOUT</button>
+    </div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="adminSection" class="hidden">
+    <div class="card hero"><span class="pill">VERIFIED ADMIN AREA</span><h2>🛠️ PRIME TOUR CONTROL CENTER</h2><p class="success">Admin: nibirgaming07@gmail.com</p><p class="small">এখান থেকে ওয়েবসাইটের কনটেন্ট, টুর্নামেন্ট, ডিপোজিট, ফলাফল, মিডিয়া ও প্লেয়ার পরিচালনা করা যাবে।</p></div>
+    <div class="card"><h3>✍️ Website Text / Notice</h3><input id="siteTitleInput" maxlength="80" placeholder="Website title"><textarea id="siteNoticeInput" maxlength="1500" placeholder="Home notice / announcement text"></textarea><button class="yellow" id="saveSiteSettingsBtn">SAVE WEBSITE TEXT</button></div>
+    <div class="card"><h3>📢 Publish Announcement</h3><input id="announcementTitle" maxlength="100" placeholder="Announcement title"><textarea id="announcementBody" maxlength="3000" placeholder="Write announcement..."></textarea><button id="publishAnnouncementBtn">PUBLISH ANNOUNCEMENT</button><div id="adminAnnouncements" class="loading">Loading...</div></div>
+    <div class="card"><h3>➕ Create Tournament</h3><input id="tName" maxlength="80" placeholder="Tournament Name"><input id="tGame" maxlength="40" value="Free Fire" placeholder="Game"><input id="tEntry" type="number" min="0" step="1" placeholder="Entry Fee (৳)"><input id="tPrize" type="number" min="0" step="1" placeholder="Prize Pool (৳)"><input id="tSlots" type="number" min="1" step="1" placeholder="Total Slots"><input id="tDate" maxlength="80" placeholder="Match Date & Time"><input id="tRoomId" maxlength="100" placeholder="Room ID (optional)"><input id="tRoomPass" maxlength="100" placeholder="Room Password (optional)"><button id="createTournamentBtn">CREATE TOURNAMENT</button><div id="adminTournaments" class="loading">Loading...</div></div>
+    <div class="card"><h3>💳 Pending Deposits</h3><div id="adminDeposits" class="loading">Loading...</div></div>
+    <div class="card"><h3>🎥 Upload Picture / Video</h3><input id="mediaTitle" maxlength="100" placeholder="Media title"><input id="mediaFile" type="file" accept="image/*,video/*"><p class="file-note">ছবি/ভিডিও Firebase Storage-এ আপলোড হবে। Storage চালু ও Rules প্রকাশ করা থাকতে হবে।</p><button id="uploadMediaBtn">UPLOAD MEDIA</button><div id="adminMedia" class="loading">Loading...</div></div>
+    <div class="card"><h3>🏅 Match Result & Prize</h3><input id="resultTournamentId" placeholder="Tournament ID"><input id="resultPlayerUid" placeholder="Winner Player UID"><input id="resultPlayerEmail" type="email" placeholder="Winner email (for display)"><input id="resultPrizeAmount" type="number" min="0" placeholder="Prize amount (৳)"><textarea id="resultNote" maxlength="500" placeholder="Result note / placement"></textarea><button class="green" id="publishResultBtn">PUBLISH RESULT + ADD PRIZE</button><div id="adminResults" class="loading">Loading...</div></div>
+    <div class="card"><h3>👥 Player Management</h3><input id="playerSearch" placeholder="Search by email or UID"><button class="blue" id="searchPlayersBtn">SEARCH PLAYER</button><div id="adminPlayers" class="loading">Search a player to manage.</div></div>
+    <div class="card"><h3>📋 All Deposits</h3><div id="adminAllDeposits" class="loading">Loading...</div></div>
+  </section>
+
+  <div class="card">
+    <button class="red" id="logoutBtn2">🚪 LOGOUT</button>
+  </div>
+</section>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup,
+  sendEmailVerification
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, addDoc, collection, query, where,
+  getDocs, updateDoc, serverTimestamp, runTransaction, orderBy, limit, deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhzD0UHn8-O7hxQIxGu3hWq2QjJfhbkSs",
+  authDomain: "prime-tour-74934.firebaseapp.com",
+  projectId: "prime-tour-74934",
+  storageBucket: "prime-tour-74934.firebasestorage.app",
+  messagingSenderId: "626502318852",
+  appId: "1:626502318852:web:f3f0e2a7dad535492cae51",
+  measurementId: "G-PWRB7ERKP6"
+};
+
+const ADMIN_EMAIL = "nibirgaming07@gmail.com";
+const BKASH = "01642268349";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const googleProvider = new GoogleAuthProvider();
+
+let currentUser = null;
+let currentUserData = null;
+
+const $ = id => document.getElementById(id);
+
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.style.display = "none", 2800);
+}
+
+function isAdmin(){
+  return !!currentUser && currentUser.email === ADMIN_EMAIL;
+}
+
+function money(n){
+  return Number(n || 0).toLocaleString("en-BD");
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+
+function showPage(page){
+  $("authPage").classList.toggle("hidden", page !== "auth");
+  $("registerPage").classList.toggle("hidden", page !== "register");
+  $("appPage").classList.toggle("hidden", page !== "app");
+}
+
+function showSection(section){
+  ["home","tournaments","wallet","profile","admin"].forEach(s => {
+    $(s + "Section").classList.add("hidden");
+  });
+
+  if(section === "admin" && !isAdmin()) section = "home";
+  $(section + "Section").classList.remove("hidden");
+
+  if(section === "tournaments") loadTournaments();
+  if(section === "wallet") loadDeposits();
+  if(section === "admin"){
+    loadAdminDeposits(); loadAdminTournaments(); loadAdminAnnouncements(); loadAdminMedia(); loadAdminResults(); loadAdminAllDeposits(); loadSiteSettings();
+  }
+}
+
+document.querySelectorAll("[data-section]").forEach(btn => {
+  btn.addEventListener("click", () => showSection(btn.dataset.section));
+});
+
+$("showRegisterBtn").addEventListener("click", () => showPage("register"));
+$("showLoginBtn").addEventListener("click", () => showPage("auth"));
+
+async function googleSignIn(){
+  try{ await signInWithPopup(auth, googleProvider); }
+  catch(e){ toast(firebaseError(e)); }
+}
+$("googleLoginBtn").addEventListener("click", googleSignIn);
+$("googleRegisterBtn").addEventListener("click", googleSignIn);
+
+$("registerBtn").addEventListener("click", async () => {
+  const name = $("regName").value.trim();
+  const email = $("regEmail").value.trim().toLowerCase();
+  const password = $("regPassword").value;
+
+  if(!name || !email || !password) return toast("সব তথ্য পূরণ করো");
+  if(password.length < 6) return toast("Password কমপক্ষে 6 অক্ষরের হতে হবে");
+
+  const btn = $("registerBtn");
+  btn.disabled = true;
+
+  try{
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", result.user.uid), {
+      uid: result.user.uid, name, email, balance: 0, createdAt: serverTimestamp()
+    });
+    if(email === ADMIN_EMAIL){
+      await sendEmailVerification(result.user);
+      toast("Admin email-এ verification link পাঠানো হয়েছে। Verify করে আবার login করো।");
+    } else {
+      toast("Account তৈরি হয়েছে!");
+    }
+  }catch(e){
+    toast(firebaseError(e));
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+$("loginBtn").addEventListener("click", async () => {
+  const email = $("loginEmail").value.trim().toLowerCase();
+  const password = $("loginPassword").value;
+
+  if(!email || !password) return toast("Email ও password দাও");
+
+  const btn = $("loginBtn");
+  btn.disabled = true;
+  try{
+    await signInWithEmailAndPassword(auth, email, password);
+  }catch(e){
+    toast(firebaseError(e));
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+function firebaseError(e){
+  const code = e?.code || "";
+  const map = {
+    "auth/invalid-credential":"Email অথবা password ভুল",
+    "auth/email-already-in-use":"এই Email দিয়ে account আছে",
+    "auth/invalid-email":"Email ঠিক নয়",
+    "auth/weak-password":"Password আরও শক্ত করো",
+    "permission-denied":"Firestore permission denied"
+  };
+  return map[code] || (e?.message || "Something went wrong");
+}
+
+async function loadUser(){
+  if(!currentUser) return;
+  const ref = doc(db, "users", currentUser.uid);
+  const snap = await getDoc(ref);
+
+  if(snap.exists()){
+    currentUserData = snap.data();
+  }else{
+    currentUserData = {
+      name: currentUser.email.split("@")[0],
+      email: currentUser.email,
+      balance: 0
+    };
+    await setDoc(ref, currentUserData);
+  }
+
+  if(currentUserData.banned === true && !isAdmin()){
+    await signOut(auth);
+    toast("তোমার অ্যাকাউন্ট Admin বন্ধ করেছে।");
+    return;
+  }
+  const name = currentUserData.name || "Player";
+  const balance = Number(currentUserData.balance || 0);
+
+  $("welcomeName").textContent = name;
+  $("profileName").textContent = name;
+  $("profileEmail").textContent = currentUser.email;
+  $("editName").value = name;
+  $("homeBalance").textContent = money(balance);
+  $("walletBalance").textContent = money(balance);
+  $("bkashNumber").textContent = BKASH;
+
+  $("adminNavBtn").classList.toggle("hidden", !isAdmin());
+  $("adminNavBtn").textContent = "🛠️ Admin Dashboard";
+
+  showPage("app");
+  showSection("home");
+
+  loadPublicAnnouncements();
+  loadPublicMedia();
+  loadSiteSettings();
+  if(isAdmin()){
+    loadAdminDeposits(); loadAdminTournaments(); loadAdminAnnouncements();
+    loadAdminMedia(); loadAdminResults(); loadAdminAllDeposits(); loadSiteSettings();
+  }
+}
+
+$("saveNameBtn").addEventListener("click", async () => {
+  if(!currentUser) return;
+  const name = $("editName").value.trim();
+  if(!name) return toast("Name দাও");
+
+  try{
+    await updateDoc(doc(db, "users", currentUser.uid), {name});
+    currentUserData.name = name;
+    $("welcomeName").textContent = name;
+    $("profileName").textContent = name;
+    toast("Name saved");
+  }catch(e){
+    toast(firebaseError(e));
+  }
+});
+
+async function doLogout(){
+  try{
+    await signOut(auth);
+  }catch(e){
+    toast(firebaseError(e));
+  }
+}
+$("logoutBtn1").addEventListener("click", doLogout);
+$("logoutBtn2").addEventListener("click", doLogout);
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if(user){
+    try{
+      await loadUser();
+    }catch(e){
+      toast("User data load হয়নি: " + firebaseError(e));
+    }
+  }else{
+    currentUserData = null;
+    showPage("auth");
+  }
+});
+
+async function loadTournaments(){
+  const box = $("tournamentList");
+  box.innerHTML = '<div class="loading">Loading...</div>';
+
+  try{
+    const snap = await getDocs(collection(db, "tournaments"));
+    const arr = [];
+    snap.forEach(d => arr.push({id:d.id, ...d.data()}));
+    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    if(!arr.length){
+      box.innerHTML = '<div class="empty">কোনো tournament নেই।</div>';
+      return;
+    }
+
+    box.innerHTML = "";
+    arr.forEach(t => {
+      const joined = Number(t.joined || 0);
+      const slots = Number(t.slots || 0);
+      const closed = t.status !== "open" || joined >= slots;
+      const div = document.createElement("div");
+      div.className = "card tournament";
+
+      div.innerHTML = `
+        <div class="topline">
+          <h3>🏆 ${escapeHTML(t.name)}</h3>
+          <span class="badge">${escapeHTML(t.status || "open")}</span>
+        </div>
+        <p>🎮 Game: <b>${escapeHTML(t.game)}</b></p>
+        <p>💰 Entry Fee: <b>৳${money(t.entry)}</b></p>
+        <p>🏅 Prize: <b>৳${money(t.prize)}</b></p>
+        <p>👥 Slots: <b>${joined}/${slots}</b></p>
+        <p>📅 ${escapeHTML(t.date)}</p>
+        ${isAdmin() ? `<p>Room: ${escapeHTML(t.roomId||"—")} / Pass: ${escapeHTML(t.roomPass||"—")}</p>` : (t.roomVisible ? `<p>Room ID: ${escapeHTML(t.roomId||"—")} | Pass: ${escapeHTML(t.roomPass||"—")}</p>` : "")}
+      `;
+
+      const btn = document.createElement("button");
+      btn.textContent = closed ? (joined >= slots ? "SLOT FULL" : "TOURNAMENT CLOSED") : "🎮 JOIN TOURNAMENT";
+      btn.disabled = closed;
+      if(!closed) btn.addEventListener("click", () => joinTournament(t.id));
+      div.appendChild(btn);
+      box.appendChild(div);
+    });
+  }catch(e){
+    box.innerHTML = '<div class="empty danger">Tournament load হয়নি.</div>';
+    toast(firebaseError(e));
+  }
+}
+
+async function joinTournament(tournamentId){
+  if(!currentUser) return toast("আগে login করো");
+
+  const btnText = "Joining...";
+  try{
+    const userRef = doc(db, "users", currentUser.uid);
+    const tournamentRef = doc(db, "tournaments", tournamentId);
+    const joinRef = doc(db, "joins", currentUser.uid + "_" + tournamentId);
+
+    await runTransaction(db, async tx => {
+      const userSnap = await tx.get(userRef);
+      const tournamentSnap = await tx.get(tournamentRef);
+      const joinSnap = await tx.get(joinRef);
+
+      if(!userSnap.exists() || !tournamentSnap.exists()) throw new Error("Data পাওয়া যায়নি");
+      if(joinSnap.exists()) throw new Error("তুমি আগে থেকেই join করেছো");
+
+      const u = userSnap.data();
+      const t = tournamentSnap.data();
+      const balance = Number(u.balance || 0);
+      const entry = Number(t.entry || 0);
+      const joined = Number(t.joined || 0);
+      const slots = Number(t.slots || 0);
+
+      if(t.status !== "open") throw new Error("Tournament closed");
+      if(joined >= slots) throw new Error("সব slot পূর্ণ");
+      if(balance < entry) throw new Error("Balance কম! আগে Add Money করো");
+
+      tx.update(userRef, {balance: balance - entry});
+      tx.update(tournamentRef, {joined: joined + 1});
+      tx.set(joinRef, {
+        tournamentId,
+        userId: currentUser.uid,
+        email: currentUser.email,
+        name: u.name || "Player",
+        paid: entry,
+        createdAt: serverTimestamp()
+      });
+    });
+
+    toast("Tournament joined successfully!");
+    await loadUser();
+    await loadTournaments();
+  }catch(e){
+    toast(e.message || firebaseError(e));
+  }
+}
+
+$("depositBtn").addEventListener("click", async () => {
+  if(!currentUser) return toast("Login করো");
+
+  const amount = Number($("depositAmount").value);
+  const trx = $("depositTrx").value.trim();
+
+  if(!Number.isFinite(amount) || amount <= 0) return toast("Valid amount দাও");
+  if(!trx) return toast("Transaction ID দাও");
+
+  const btn = $("depositBtn");
+  btn.disabled = true;
+
+  try{
+    await addDoc(collection(db, "deposits"), {
+      userId: currentUser.uid,
+      email: currentUser.email,
+      amount,
+      trx,
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
+
+    $("depositAmount").value = "";
+    $("depositTrx").value = "";
+    toast("Deposit request submitted!");
+    loadDeposits();
+    if(isAdmin()) loadAdminDeposits();
+  }catch(e){
+    toast(firebaseError(e));
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+async function loadDeposits(){
+  if(!currentUser) return;
+  const box = $("depositHistory");
+  box.innerHTML = '<div class="loading">Loading...</div>';
+
+  try{
+    const q = query(collection(db, "deposits"), where("userId","==",currentUser.uid));
+    const snap = await getDocs(q);
+    const arr = [];
+    snap.forEach(d => arr.push(d.data()));
+    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    if(!arr.length){
+      box.innerHTML = '<div class="empty">No deposit history</div>';
+      return;
+    }
+
+    box.innerHTML = "";
+    arr.forEach(x => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <div class="row">
+          <span class="amount">৳${money(x.amount)}</span>
+          <span class="badge">${escapeHTML(x.status)}</span>
+        </div>
+        <p class="small">TRX: ${escapeHTML(x.trx)}</p>
+      `;
+      box.appendChild(div);
+    });
+  }catch(e){
+    box.innerHTML = '<div class="empty danger">History load হয়নি.</div>';
+    toast(firebaseError(e));
+  }
+}
+
+async function loadAdminDeposits(){
+  if(!isAdmin()) return;
+  const box = $("adminDeposits");
+  box.innerHTML = '<div class="loading">Loading...</div>';
+
+  try{
+    const q = query(collection(db, "deposits"), where("status","==","pending"));
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+      box.innerHTML = '<div class="empty">No pending deposits</div>';
+      return;
+    }
+
+    box.innerHTML = "";
+    snap.forEach(d => {
+      const x = d.data();
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <p>👤 ${escapeHTML(x.email)}</p>
+        <p>💰 Amount: <b>৳${money(x.amount)}</b></p>
+        <p>📋 TRX: <b>${escapeHTML(x.trx)}</b></p>
+      `;
+
+      const approve = document.createElement("button");
+      approve.className = "green";
+      approve.textContent = "✅ APPROVE";
+      approve.addEventListener("click", () => approveDeposit(d.id, x.userId, Number(x.amount)));
+
+      const reject = document.createElement("button");
+      reject.className = "red";
+      reject.textContent = "❌ REJECT";
+      reject.addEventListener("click", () => rejectDeposit(d.id));
+
+      div.append(approve, reject);
+      box.appendChild(div);
+    });
+  }catch(e){
+    box.innerHTML = '<div class="empty danger">Admin deposits load হয়নি.</div>';
+    toast(firebaseError(e));
+  }
+}
+
+async function approveDeposit(depositId, userId, amount){
+  if(!isAdmin()) return toast("Admin only");
+  if(!Number.isFinite(amount) || amount <= 0) return toast("Invalid amount");
+
+  try{
+    await runTransaction(db, async tx => {
+      const depRef = doc(db, "deposits", depositId);
+      const userRef = doc(db, "users", userId);
+
+      const depSnap = await tx.get(depRef);
+      const userSnap = await tx.get(userRef);
+
+      if(!depSnap.exists() || !userSnap.exists()) throw new Error("Data পাওয়া যায়নি");
+
+      const dep = depSnap.data();
+      if(dep.status !== "pending") throw new Error("এই deposit already processed");
+
+      const user = userSnap.data();
+      tx.update(userRef, {balance: Number(user.balance || 0) + amount});
+      tx.update(depRef, {status:"approved", approvedAt:serverTimestamp()});
+    });
+
+    toast("Deposit approved!");
+    loadAdminDeposits();
+  }catch(e){
+    toast(e.message || firebaseError(e));
+  }
+}
+
+async function rejectDeposit(id){
+  if(!isAdmin()) return toast("Admin only");
+
+  try{
+    await updateDoc(doc(db,"deposits",id), {
+      status:"rejected",
+      rejectedAt:serverTimestamp()
+    });
+    toast("Deposit rejected");
+    loadAdminDeposits();
+  }catch(e){
+    toast(firebaseError(e));
+  }
+}
+
+$("createTournamentBtn").addEventListener("click", async () => {
+  if(!isAdmin()) return toast("Admin only");
+
+  const name = $("tName").value.trim();
+  const game = $("tGame").value.trim();
+  const entry = Number($("tEntry").value);
+  const prize = Number($("tPrize").value);
+  const slots = Number($("tSlots").value);
+  const date = $("tDate").value.trim();
+  const roomId = $("tRoomId").value.trim();
+  const roomPass = $("tRoomPass").value.trim();
+
+  if(!name || !game || !date) return toast("Name, Game, Date পূরণ করো");
+  if(!Number.isFinite(entry) || entry < 0) return toast("Entry Fee ঠিক দাও");
+  if(!Number.isFinite(prize) || prize < 0) return toast("Prize Pool ঠিক দাও");
+  if(!Number.isInteger(slots) || slots < 1) return toast("Slots ঠিক দাও");
+
+  const btn = $("createTournamentBtn");
+  btn.disabled = true;
+
+  try{
+    await addDoc(collection(db,"tournaments"), {
+      name, game, entry, prize, slots,
+      joined:0, date, roomId, roomPass, roomVisible:false, status:"open",
+      createdAt:serverTimestamp()
+    });
+
+    ["tName","tEntry","tPrize","tSlots","tDate","tRoomId","tRoomPass"].forEach(id => $(id).value = "");
+    $("tGame").value = "Free Fire";
+
+    toast("Tournament তৈরি হয়েছে!");
+    loadAdminTournaments();
+    loadTournaments();
+  }catch(e){
+    toast(firebaseError(e));
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+async function loadAdminTournaments(){
+  if(!isAdmin()) return;
+  const box = $("adminTournaments");
+  box.innerHTML = '<div class="loading">Loading...</div>';
+
+  try{
+    const snap = await getDocs(collection(db,"tournaments"));
+    const arr = [];
+    snap.forEach(d => arr.push({id:d.id,...d.data()}));
+    arr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    if(!arr.length){
+      box.innerHTML = '<div class="empty">No tournaments</div>';
+      return;
+    }
+
+    box.innerHTML = "";
+    arr.forEach(t => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <div class="topline">
+          <h3>${escapeHTML(t.name)}</h3>
+          <span class="badge">${escapeHTML(t.status)}</span>
+        </div>
+        <p>👥 ${Number(t.joined||0)}/${Number(t.slots||0)} joined</p>
+        <p>💰 Entry ৳${money(t.entry)} | 🏅 Prize ৳${money(t.prize)}</p>
+      `;
+
+      const roomBtn = document.createElement("button"); roomBtn.className = "blue";
+      roomBtn.textContent = t.roomVisible ? "HIDE ROOM DETAILS" : "SHOW ROOM DETAILS TO PLAYERS";
+      roomBtn.addEventListener("click", async()=>{try{await updateDoc(doc(db,"tournaments",t.id),{roomVisible:!t.roomVisible});toast("Room visibility updated");loadAdminTournaments();loadTournaments()}catch(e){toast(firebaseError(e))}}); div.appendChild(roomBtn);
+      if(t.status === "open"){
+        const close = document.createElement("button"); close.className = "gray"; close.textContent = "CLOSE TOURNAMENT"; close.addEventListener("click", () => closeTournament(t.id)); div.appendChild(close);
+      } else { const open=document.createElement("button");open.className="green";open.textContent="REOPEN TOURNAMENT";open.addEventListener("click",async()=>{try{await updateDoc(doc(db,"tournaments",t.id),{status:"open"});loadAdminTournaments();loadTournaments()}catch(e){toast(firebaseError(e))}});div.appendChild(open); }
+      const del=document.createElement("button");del.className="red";del.textContent="DELETE TOURNAMENT";del.addEventListener("click",async()=>{if(!confirm("Delete this tournament?"))return;try{await deleteDoc(doc(db,"tournaments",t.id));toast("Tournament deleted");loadAdminTournaments();loadTournaments()}catch(e){toast(firebaseError(e))}});div.appendChild(del);
+      box.appendChild(div);
+    });
+  }catch(e){
+    box.innerHTML = '<div class="empty danger">Admin tournaments load হয়নি.</div>';
+    toast(firebaseError(e));
+  }
+}
+
+async function closeTournament(id){
+  if(!isAdmin()) return toast("Admin only");
+  try{
+    await updateDoc(doc(db,"tournaments",id), {status:"closed"});
+    toast("Tournament closed");
+    loadAdminTournaments();
+    loadTournaments();
+  }catch(e){
+    toast(firebaseError(e));
+  }
+}
+
+
+// Admin content management and media tools
+async function loadSiteSettings(){
+  try{const s=await getDoc(doc(db,"siteSettings","main"));if(s.exists()){const d=s.data();const title=d.title||"PRIME TOUR";const notice=d.notice||"Welcome to PRIME TOUR";const titleInput=$("siteTitleInput");const noticeInput=$("siteNoticeInput");if(titleInput&&isAdmin())titleInput.value=title;if(noticeInput&&isAdmin())noticeInput.value=notice;const n=$("publicSiteNotice");if(n)n.textContent=notice;const brand=$("siteBrandTitle");if(brand)brand.textContent=title;document.title=title;}}catch(e){console.warn(e)}
+}
+$("saveSiteSettingsBtn").addEventListener("click",async()=>{if(!isAdmin())return toast("Admin only");try{await setDoc(doc(db,"siteSettings","main"),{title:$('siteTitleInput').value.trim()||"PRIME TOUR",notice:$('siteNoticeInput').value.trim(),updatedAt:serverTimestamp()},{merge:true});toast("Website text saved");loadPublicAnnouncements()}catch(e){toast(firebaseError(e))}});
+$("publishAnnouncementBtn").addEventListener("click",async()=>{if(!isAdmin())return toast("Admin only");const title=$("announcementTitle").value.trim(),body=$("announcementBody").value.trim();if(!title||!body)return toast("Title and message required");try{await addDoc(collection(db,"announcements"),{title,body,createdBy:currentUser.email,createdAt:serverTimestamp()});$("announcementTitle").value="";$("announcementBody").value="";toast("Announcement published");loadAdminAnnouncements();loadPublicAnnouncements()}catch(e){toast(firebaseError(e))}});
+async function loadPublicAnnouncements(){const box=$("publicAnnouncements");if(!box)return;try{const snap=await getDocs(collection(db,"announcements"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>এখনো কোনো announcement নেই।</div>";arr.slice(0,10).forEach(a=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<h3>${escapeHTML(a.title||"Announcement")}</h3><p>${escapeHTML(a.body||"")}</p><p class="small">${a.createdAt?.toDate?a.createdAt.toDate().toLocaleString():""}</p>`;box.appendChild(el)})}catch(e){box.innerHTML="<div class='empty'>Announcements load হয়নি। Rules check করো।</div>"}}
+async function loadAdminAnnouncements(){if(!isAdmin())return;const box=$("adminAnnouncements");try{const snap=await getDocs(collection(db,"announcements"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>No announcements</div>";arr.forEach(a=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<b>${escapeHTML(a.title||"")}</b><p>${escapeHTML(a.body||"")}</p>`;const del=document.createElement("button");del.className="red";del.textContent="DELETE ANNOUNCEMENT";del.onclick=async()=>{if(!confirm("Delete announcement?"))return;try{await deleteDoc(doc(db,"announcements",a.id));loadAdminAnnouncements();loadPublicAnnouncements()}catch(e){toast(firebaseError(e))}};el.appendChild(del);box.appendChild(el)})}catch(e){box.textContent="Announcements load হয়নি"}}
+$("uploadMediaBtn").addEventListener("click",async()=>{if(!isAdmin())return toast("Admin only");const f=$("mediaFile").files[0];const title=$("mediaTitle").value.trim()||f?.name;if(!f)return toast("আগে ছবি বা ভিডিও নির্বাচন করো");if(!/^image\//.test(f.type)&&!/^video\//.test(f.type))return toast("শুধু ছবি বা ভিডিও আপলোড করা যাবে");if(f.size>50*1024*1024)return toast("ফাইল 50MB-এর কম হতে হবে");const btn=$("uploadMediaBtn");btn.disabled=true;try{const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,"_");const path=`siteMedia/${Date.now()}_${safeName}`;const rr=storageRef(storage,path);await uploadBytes(rr,f,{contentType:f.type});const url=await getDownloadURL(rr);await addDoc(collection(db,"media"),{title,url,path,contentType:f.type,size:f.size,uploadedBy:currentUser.email,createdAt:serverTimestamp()});toast("Media uploaded");$("mediaTitle").value="";$("mediaFile").value="";loadAdminMedia();loadPublicMedia()}catch(e){toast(firebaseError(e)+" — Storage Rules/Storage setup দেখো")}finally{btn.disabled=false}});
+async function loadPublicMedia(){const box=$("publicMedia");if(!box)return;try{const snap=await getDocs(collection(db,"media"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>এখনো কোনো ছবি/ভিডিও নেই।</div>";arr.slice(0,12).forEach(m=>{const el=document.createElement("div");el.className="card";const media=/^video\//.test(m.contentType||"")?`<video controls playsinline class="media-preview" src="${escapeHTML(m.url)}"></video>`:`<img class="media-preview" loading="lazy" src="${escapeHTML(m.url)}" alt="${escapeHTML(m.title||"Media")}">`;el.innerHTML=`<b>${escapeHTML(m.title||"Media")}</b>${media}`;box.appendChild(el)})}catch(e){box.innerHTML="<div class='empty'>Media load হয়নি।</div>"}}
+async function loadAdminMedia(){if(!isAdmin())return;const box=$("adminMedia");try{const snap=await getDocs(collection(db,"media"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>No uploaded media</div>";arr.forEach(m=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<b>${escapeHTML(m.title||m.path||"Media")}</b><p class="small">${escapeHTML(m.contentType||"")}</p><a href="${escapeHTML(m.url)}" target="_blank" rel="noopener">Open media</a>`;const del=document.createElement("button");del.className="red";del.textContent="DELETE MEDIA RECORD";del.onclick=async()=>{if(!confirm("Delete media record? (Storage file may remain)"))return;try{await deleteDoc(doc(db,"media",m.id));loadAdminMedia();loadPublicMedia()}catch(e){toast(firebaseError(e))}};el.appendChild(del);box.appendChild(el)})}catch(e){box.textContent="Media list load হয়নি"}}
+$("publishResultBtn").addEventListener("click",async()=>{if(!isAdmin())return toast("Admin only");const tournamentId=$("resultTournamentId").value.trim(),uid=$("resultPlayerUid").value.trim(),email=$("resultPlayerEmail").value.trim(),amount=Number($("resultPrizeAmount").value),note=$("resultNote").value.trim();if(!tournamentId||!uid||!Number.isFinite(amount)||amount<0)return toast("Tournament ID, player UID ও prize amount দাও");try{const userRef=doc(db,"users",uid);const resultRef=doc(collection(db,"results"));await runTransaction(db,async tx=>{const us=await tx.get(userRef);if(!us.exists())throw new Error("Player UID পাওয়া যায়নি");const u=us.data();tx.update(userRef,{balance:Number(u.balance||0)+amount});tx.set(resultRef,{tournamentId,userId:uid,email:email||u.email||"",prize:amount,note,status:"published",createdAt:serverTimestamp(),createdBy:currentUser.email})});toast("Result published & prize added");$("resultPrizeAmount").value="";$("resultNote").value="";loadAdminResults()}catch(e){toast(e.message||firebaseError(e))}});
+async function loadAdminResults(){if(!isAdmin())return;const box=$("adminResults");try{const snap=await getDocs(collection(db,"results"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>No results yet</div>";arr.forEach(r=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<p><b>${escapeHTML(r.email||r.userId||"")}</b></p><p>Tournament: ${escapeHTML(r.tournamentId||"")}</p><p>Prize: ৳${money(r.prize)}</p><p>${escapeHTML(r.note||"")}</p>`;box.appendChild(el)})}catch(e){box.textContent="Results load হয়নি"}}
+$("searchPlayersBtn").addEventListener("click",async()=>{if(!isAdmin())return toast("Admin only");const term=$("playerSearch").value.trim().toLowerCase();if(!term)return toast("Email বা UID লিখো");const box=$("adminPlayers");box.innerHTML="Searching...";try{let snap; if(term.includes("@")){snap=await getDocs(query(collection(db,"users"),where("email","==",term)))}else{const one=await getDoc(doc(db,"users",term));if(one.exists()){renderPlayers([{id:one.id,...one.data()}]);return}else{box.textContent="UID পাওয়া যায়নি। Email দিয়ে খুঁজে দেখো।";return}}const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));renderPlayers(arr)}catch(e){box.textContent="Player search হয়নি: "+firebaseError(e)}});
+function renderPlayers(arr){const box=$("adminPlayers");box.innerHTML=arr.length?"":"<div class='empty'>Player পাওয়া যায়নি</div>";arr.forEach(p=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<b>${escapeHTML(p.name||"Player")}</b><p>${escapeHTML(p.email||"")}</p><p class="small">UID: ${escapeHTML(p.id)}</p><p>Balance: ৳${money(p.balance)}</p><p>Status: ${p.banned?"BANNED":"ACTIVE"}</p>`;const ban=document.createElement("button");ban.className=p.banned?"green":"red";ban.textContent=p.banned?"UNBAN PLAYER":"BAN PLAYER";ban.onclick=async()=>{if(!confirm((p.banned?"Unban":"Ban")+" this player?"))return;try{await updateDoc(doc(db,"users",p.id),{banned:!p.banned,bannedAt:!p.banned?serverTimestamp():null});toast(p.banned?"Player unbanned":"Player banned");$("searchPlayersBtn").click()}catch(e){toast(firebaseError(e))}};const adj=document.createElement("button");adj.className="yellow";adj.textContent="ADJUST WALLET";adj.onclick=async()=>{const raw=prompt("Wallet change amount: positive to add, negative to subtract", "0");if(raw===null)return;const delta=Number(raw);if(!Number.isFinite(delta))return toast("Invalid amount");try{await runTransaction(db,async tx=>{const ref=doc(db,"users",p.id);const ss=await tx.get(ref);if(!ss.exists())throw new Error("Player missing");const next=Number(ss.data().balance||0)+delta;if(next<0)throw new Error("Balance cannot be negative");tx.update(ref,{balance:next})});toast("Wallet updated");$("searchPlayersBtn").click()}catch(e){toast(e.message||firebaseError(e))}};el.append(ban,adj);box.appendChild(el)})}
+async function loadAdminAllDeposits(){if(!isAdmin())return;const box=$("adminAllDeposits");try{const snap=await getDocs(collection(db,"deposits"));const arr=[];snap.forEach(d=>arr.push({id:d.id,...d.data()}));arr.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));box.innerHTML=arr.length?"":"<div class='empty'>No deposits</div>";arr.forEach(d=>{const el=document.createElement("div");el.className="card";el.innerHTML=`<b>${escapeHTML(d.email||d.userId||"")}</b><p>৳${money(d.amount)} · ${escapeHTML(d.status||"")}</p><p class="small">TRX: ${escapeHTML(d.trx||"")}</p>`;box.appendChild(el)})}catch(e){box.textContent="Deposit list load হয়নি"}}
+
+$("loginPassword").addEventListener("keydown", e => {
+  if(e.key === "Enter") $("loginBtn").click();
+});
+</script>
+</body>
+</html>
